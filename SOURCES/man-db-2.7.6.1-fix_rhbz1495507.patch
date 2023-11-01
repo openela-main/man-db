@@ -1,0 +1,90 @@
+From 79308ac147be9e9c889798cba78bab2af05048e1 Mon Sep 17 00:00:00 2001
+From: Jiri Kucera <jkucera@redhat.com>
+Date: Wed, 17 Jan 2018 13:57:34 +0100
+Subject: [PATCH] Fix a segfault in 'man -D --help'
+
+This patch is an adjusted version (due to the patch rejected hunk issues) of its original (by Colin Watson) from: https://git.savannah.gnu.org/cgit/man-db.git/patch/?id=b32977ff73220cd351387abe558fb523d1deedbb
+
+Reported by Jiri Kucera.
+
+* src/man.c (init_html_pager): New function.
+(parse_opt): Call init_html_pager rather than setting html_pager to
+NULL.
+(help_filter): Assert that browser is non-NULL.
+(main): Call init_html_pager rather than doing the same thing directly.
+* NEWS: Document this.
+---
+ NEWS      | 10 ++++++++++
+ src/man.c | 17 +++++++++++------
+ 2 files changed, 21 insertions(+), 6 deletions(-)
+
+diff --git a/NEWS b/NEWS
+index 366a0263..ff35e884 100644
+--- a/NEWS
++++ b/NEWS
+@@ -1,3 +1,13 @@
++man-db 2.7.7
++============
++
++Major changes since man-db 2.7.6.1:
++
++	Fixes:
++	------
++
++	o Fix a segfault in 'man -D --help'.
++
+ man-db 2.7.6.1 (12 December 2016)
+ =================================
+ 
+diff --git a/src/man.c b/src/man.c
+index 8b11f43e..cb0930b8 100644
+--- a/src/man.c
++++ b/src/man.c
+@@ -345,6 +345,13 @@ static struct argp_option options[] = {
+ 	{ 0 }
+ };
+ 
++static void init_html_pager (void)
++{
++	html_pager = getenv ("BROWSER");
++	if (!html_pager)
++		html_pager = WEB_BROWSER;
++}
++
+ static error_t parse_opt (int key, char *arg, struct argp_state *state)
+ {
+ 	static int apropos, whatis; /* retain values between calls */
+@@ -369,7 +376,7 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
+ 			ditroff = 0;
+ 			gxditview = NULL;
+ 			htmlout = 0;
+-			html_pager = NULL;
++			init_html_pager ();
+ #endif
+ 			roff_device = want_encoding = extension = pager =
+ 				locale = alt_system_name = external =
+@@ -582,6 +589,7 @@ static char *help_filter (int key, const char *text,
+ # ifdef TROFF_IS_GROFF
+ 		case 'H':
+ 			browser = html_pager;
++			assert (browser);
+ 			if (STRNEQ (browser, "exec ", 5))
+ 				browser += 5;
+ 			return xasprintf (text, browser);
+@@ -4018,11 +4026,8 @@ int main (int argc, char *argv[])
+ 
+ #ifdef TROFF_IS_GROFF
+ 	/* used in --help, so initialise early */
+-	if (!html_pager) {
+-		html_pager = getenv ("BROWSER");
+-		if (!html_pager)
+-			html_pager = WEB_BROWSER;
+-	}
++	if (!html_pager)
++		init_html_pager ();
+ #endif /* TROFF_IS_GROFF */
+ 
+ 	/* First of all, find out if $MANOPT is set. If so, put it in 
+-- 
+2.14.3
+
