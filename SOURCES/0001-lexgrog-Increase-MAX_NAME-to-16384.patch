@@ -1,0 +1,40 @@
+From 5287a51844805151b8aa892784ab48a3a067c2ad Mon Sep 17 00:00:00 2001
+From: Lukas Javorsky <ljavorsk@redhat.com>
+Date: Tue, 10 Jun 2025 10:51:11 +0000
+Subject: [PATCH] lexgrog Increase MAX_NAME to 16384
+
+Inspired by: https://gitlab.com/man-db/man-db/-/commit/2da9562c194d520d38978f66bde7ef25d863d8a5
+---
+ src/lexgrog.c | 2 +-
+ src/lexgrog.l | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/lexgrog.c b/src/lexgrog.c
+index 56663b5..871ac19 100644
+--- a/src/lexgrog.c
++++ b/src/lexgrog.c
+@@ -2781,7 +2781,7 @@ char *yytext;
+ #include "manconv_client.h"
+ 
+ #define YY_READ_BUF_SIZE	1024
+-#define MAX_NAME		8192
++#define MAX_NAME		16384
+ 
+ /* defines the ordered list of filters detected by lexgrog */
+ enum {
+diff --git a/src/lexgrog.l b/src/lexgrog.l
+index 41527a4..59fc406 100644
+--- a/src/lexgrog.l
++++ b/src/lexgrog.l
+@@ -71,7 +71,7 @@
+ #include "manconv_client.h"
+ 
+ #define YY_READ_BUF_SIZE	1024
+-#define MAX_NAME		8192
++#define MAX_NAME		16384
+ 
+ /* defines the ordered list of filters detected by lexgrog */
+ enum {
+-- 
+2.49.0
+

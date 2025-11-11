@@ -3,7 +3,7 @@
 Summary: Tools for searching and reading man pages
 Name: man-db
 Version: 2.12.0
-Release: 8%{?dist}
+Release: 10%{?dist}
 # GPLv2+ .. man-db
 # GPLv3+ .. gnulib
 License: GPL-2.0-or-later AND GPL-3.0-or-later
@@ -38,6 +38,9 @@ Recommends: glibc-gconv-extra
 Requires(post): %{_sbindir}/update-alternatives
 Requires(postun): %{_sbindir}/update-alternatives
 Requires(preun): %{_sbindir}/update-alternatives
+
+# Upstream patch: https://gitlab.com/man-db/man-db/-/commit/2da9562c194d520d38978f66bde7ef25d863d8a5
+Patch0001: 0001-lexgrog-Increase-MAX_NAME-to-16384.patch
 
 %description
 The man-db package includes five tools for browsing man-pages:
@@ -234,6 +237,14 @@ fi
 %config(noreplace) %{_sysconfdir}/cron.daily/man-db.cron
 
 %changelog
+* Tue Jun 10 2025 Lukas Javorsky <ljavorsk@redhat.com> - 2.12.0-10
+- Fix patch to increase MAX_NAME to 16384
+- Resolves: RHEL-93654
+
+* Tue May 27 2025 Lukas Javorsky <ljavorsk@redhat.com> - 2.12.0-9
+- Increase MAX_NAME to 16384
+- Resolves: RHEL-93654
+
 * Tue Oct 29 2024 Troy Dawson <tdawson@redhat.com> - 2.12.0-8
 - Bump release for October 2024 mass rebuild:
   Resolves: RHEL-64018
