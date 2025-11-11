@@ -4,7 +4,7 @@
 Summary: Tools for searching and reading man pages
 Name: man-db
 Version: 2.9.3
-Release: 7%{?dist}
+Release: 9%{?dist}
 # GPLv2+ .. man-db
 # GPLv3+ .. gnulib
 License: GPLv2+ and GPLv3+
@@ -26,6 +26,9 @@ Patch2: man-db-2.9.1-snap.patch
 
 # fix important Covscan defects
 Patch3: man-db-2.9.3-coverity.patch
+
+# Inspired by upstream patch: https://gitlab.com/man-db/man-db/-/commit/2da9562c194d520d38978f66bde7ef25d863d8a5
+Patch4: 0001-lexgrog-Increase-MAX_NAME-to-16384.patch
 
 Obsoletes: man < 2.0
 Provides: man = %{version}
@@ -235,6 +238,14 @@ fi
 %config(noreplace) %{_sysconfdir}/cron.daily/man-db.cron
 
 %changelog
+* Tue Jun 10 2025 Lukas Javorsky <ljavorsk@redhat.com> - 2.9.3-9
+- Fix patch to increase MAX_NAME to 16384
+- Resolves: RHEL-93724
+
+* Tue May 27 2025 Lukas Javorsky <ljavorsk@redhat.com> - 2.9.3-8
+- Increase MAX_NAME to 16384
+- Resolves: RHEL-93724
+
 * Mon Sep 19 2022 Lukas Javorsky <ljavorsk@redhat.com> - 2.9.3-7
 - Rebuild for man-db-cron compose change.
   Changing from buildroot to Appstream compose.
